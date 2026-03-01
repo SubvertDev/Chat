@@ -12,10 +12,10 @@
     {
       "identity" : "anchoredpopup",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/exyte/AnchoredPopup.git",
+      "location" : "https://github.com/SubvertDev/AnchoredPopup.git",
       "state" : {
-        "revision" : "787f27027d3ef38c01469d228ce062ab4d5645f5",
-        "version" : "1.0.6"
+        "branch" : "main",
+        "revision" : "c409740455e14866a223715ed285da33cfd0f044"
       }
     },
     {
@@ -25,6 +25,15 @@
       "state" : {
         "revision" : "37f5b1ff6cf8bc4a78c0bc5eb1b814381bac9580",
         "version" : "2.2.16"
+      }
+    },
+    {
+      "identity" : "kingfisher",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/onevcat/Kingfisher",
+      "state" : {
+        "revision" : "e227df15448d2ad1a5d4e4c49722a71c68f9058a",
+        "version" : "8.7.0"
       }
     },
     {
@@ -39,10 +48,10 @@
     {
       "identity" : "mediapicker",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/exyte/MediaPicker.git",
+      "location" : "https://github.com/SubvertDev/MediaPicker.git",
       "state" : {
-        "revision" : "c287ee410e5d9e9d642ed9c715042830f174a1d6",
-        "version" : "3.1.4"
+        "branch" : "main",
+        "revision" : "199f445c1efa65291160d9589ad8509848130783"
       }
     }
   ],
