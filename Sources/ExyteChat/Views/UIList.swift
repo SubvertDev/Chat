@@ -403,9 +403,7 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
         let messageFont: UIFont
         var sections: [MessagesSection] {
             didSet {
-                if let lastSection = sections.last {
-                    paginationTargetIndexPath = IndexPath(row: lastSection.rows.count - 1, section: sections.count - 1)
-                }
+                paginationTargetIndexPath = Self.makePaginationTargetIndexPath(from: sections)
             }
         }
         let ids: [String]
@@ -449,9 +447,14 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
             self.sections = sections
             self.ids = ids
             self.mainBackgroundColor = mainBackgroundColor
-            self.paginationTargetIndexPath = paginationTargetIndexPath
+            self.paginationTargetIndexPath = paginationTargetIndexPath ?? Self.makePaginationTargetIndexPath(from: sections)
             self.listSwipeActions = listSwipeActions
             self.keyboardDismissMode = keyboardDismissMode
+        }
+
+        private static func makePaginationTargetIndexPath(from sections: [MessagesSection]) -> IndexPath? {
+            guard let lastSection = sections.last, !lastSection.rows.isEmpty else { return nil }
+            return IndexPath(row: lastSection.rows.count - 1, section: sections.count - 1)
         }
 
         /// call pagination handler when this row is reached
