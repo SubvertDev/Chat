@@ -17,14 +17,17 @@ public extension ChatView where MessageContent == EmptyView {
          reactionDelegate: ReactionDelegate? = nil,
          inputViewBuilder: @escaping InputViewBuilderClosure,
          messageMenuAction: MessageMenuActionClosure?) {
-        self.type = chatType
-        self.didSendMessage = didSendMessage
-        self.didUpdateAttachmentStatus = didUpdateAttachmentStatus
-        self.reactionDelegate = reactionDelegate
-        self.sections = ChatView.mapMessages(messages, chatType: chatType, replyMode: replyMode)
-        self.ids = messages.map { $0.id }
-        self.inputViewBuilder = inputViewBuilder
-        self.messageMenuAction = messageMenuAction
+        self.init(
+            initializing: messages,
+            chatType: chatType,
+            replyMode: replyMode,
+            reactionDelegate: reactionDelegate,
+            messageBuilder: nil,
+            inputViewBuilder: inputViewBuilder,
+            messageMenuAction: messageMenuAction,
+            didUpdateAttachmentStatus: didUpdateAttachmentStatus,
+            didSendMessage: didSendMessage
+        )
     }
 }
 
@@ -38,14 +41,17 @@ public extension ChatView where InputViewContent == EmptyView {
          reactionDelegate: ReactionDelegate? = nil,
          messageBuilder: @escaping MessageBuilderClosure,
          messageMenuAction: MessageMenuActionClosure?) {
-        self.type = chatType
-        self.didSendMessage = didSendMessage
-        self.didUpdateAttachmentStatus = didUpdateAttachmentStatus
-        self.reactionDelegate = reactionDelegate
-        self.sections = ChatView.mapMessages(messages, chatType: chatType, replyMode: replyMode)
-        self.ids = messages.map { $0.id }
-        self.messageBuilder = messageBuilder
-        self.messageMenuAction = messageMenuAction
+        self.init(
+            initializing: messages,
+            chatType: chatType,
+            replyMode: replyMode,
+            reactionDelegate: reactionDelegate,
+            messageBuilder: messageBuilder,
+            inputViewBuilder: nil,
+            messageMenuAction: messageMenuAction,
+            didUpdateAttachmentStatus: didUpdateAttachmentStatus,
+            didSendMessage: didSendMessage
+        )
     }
 }
 
@@ -59,14 +65,17 @@ public extension ChatView where MenuAction == DefaultMessageMenuAction {
          reactionDelegate: ReactionDelegate? = nil,
          messageBuilder: @escaping MessageBuilderClosure,
          inputViewBuilder: @escaping InputViewBuilderClosure) {
-        self.type = chatType
-        self.didSendMessage = didSendMessage
-        self.didUpdateAttachmentStatus = didUpdateAttachmentStatus
-        self.reactionDelegate = reactionDelegate
-        self.sections = ChatView.mapMessages(messages, chatType: chatType, replyMode: replyMode)
-        self.ids = messages.map { $0.id }
-        self.messageBuilder = messageBuilder
-        self.inputViewBuilder = inputViewBuilder
+        self.init(
+            initializing: messages,
+            chatType: chatType,
+            replyMode: replyMode,
+            reactionDelegate: reactionDelegate,
+            messageBuilder: messageBuilder,
+            inputViewBuilder: inputViewBuilder,
+            messageMenuAction: nil,
+            didUpdateAttachmentStatus: didUpdateAttachmentStatus,
+            didSendMessage: didSendMessage
+        )
     }
 }
 
@@ -79,13 +88,17 @@ public extension ChatView where MessageContent == EmptyView, InputViewContent ==
          didUpdateAttachmentStatus: ((AttachmentUploadUpdate) -> Void)? = nil,
          reactionDelegate: ReactionDelegate? = nil,
          messageMenuAction: MessageMenuActionClosure?) {
-        self.type = chatType
-        self.didSendMessage = didSendMessage
-        self.didUpdateAttachmentStatus = didUpdateAttachmentStatus
-        self.reactionDelegate = reactionDelegate
-        self.sections = ChatView.mapMessages(messages, chatType: chatType, replyMode: replyMode)
-        self.ids = messages.map { $0.id }
-        self.messageMenuAction = messageMenuAction
+        self.init(
+            initializing: messages,
+            chatType: chatType,
+            replyMode: replyMode,
+            reactionDelegate: reactionDelegate,
+            messageBuilder: nil,
+            inputViewBuilder: nil,
+            messageMenuAction: messageMenuAction,
+            didUpdateAttachmentStatus: didUpdateAttachmentStatus,
+            didSendMessage: didSendMessage
+        )
     }
 }
 
@@ -98,13 +111,17 @@ public extension ChatView where InputViewContent == EmptyView, MenuAction == Def
          didUpdateAttachmentStatus: ((AttachmentUploadUpdate) -> Void)? = nil,
          reactionDelegate: ReactionDelegate? = nil,
          messageBuilder: @escaping MessageBuilderClosure) {
-        self.type = chatType
-        self.didSendMessage = didSendMessage
-        self.didUpdateAttachmentStatus = didUpdateAttachmentStatus
-        self.reactionDelegate = reactionDelegate
-        self.sections = ChatView.mapMessages(messages, chatType: chatType, replyMode: replyMode)
-        self.ids = messages.map { $0.id }
-        self.messageBuilder = messageBuilder
+        self.init(
+            initializing: messages,
+            chatType: chatType,
+            replyMode: replyMode,
+            reactionDelegate: reactionDelegate,
+            messageBuilder: messageBuilder,
+            inputViewBuilder: nil,
+            messageMenuAction: nil,
+            didUpdateAttachmentStatus: didUpdateAttachmentStatus,
+            didSendMessage: didSendMessage
+        )
     }
 }
 
@@ -117,13 +134,17 @@ public extension ChatView where MessageContent == EmptyView, MenuAction == Defau
          didUpdateAttachmentStatus: ((AttachmentUploadUpdate) -> Void)? = nil,
          reactionDelegate: ReactionDelegate? = nil,
          inputViewBuilder: @escaping InputViewBuilderClosure) {
-        self.type = chatType
-        self.didSendMessage = didSendMessage
-        self.didUpdateAttachmentStatus = didUpdateAttachmentStatus
-        self.reactionDelegate = reactionDelegate
-        self.sections = ChatView.mapMessages(messages, chatType: chatType, replyMode: replyMode)
-        self.ids = messages.map { $0.id }
-        self.inputViewBuilder = inputViewBuilder
+        self.init(
+            initializing: messages,
+            chatType: chatType,
+            replyMode: replyMode,
+            reactionDelegate: reactionDelegate,
+            messageBuilder: nil,
+            inputViewBuilder: inputViewBuilder,
+            messageMenuAction: nil,
+            didUpdateAttachmentStatus: didUpdateAttachmentStatus,
+            didSendMessage: didSendMessage
+        )
     }
 }
 
@@ -135,11 +156,16 @@ public extension ChatView where MessageContent == EmptyView, InputViewContent ==
          didSendMessage: @escaping (DraftMessage) -> Void,
          didUpdateAttachmentStatus: ((AttachmentUploadUpdate) -> Void)? = nil,
          reactionDelegate: ReactionDelegate? = nil) {
-        self.type = chatType
-        self.didSendMessage = didSendMessage
-        self.didUpdateAttachmentStatus = didUpdateAttachmentStatus
-        self.reactionDelegate = reactionDelegate
-        self.sections = ChatView.mapMessages(messages, chatType: chatType, replyMode: replyMode)
-        self.ids = messages.map { $0.id }
+        self.init(
+            initializing: messages,
+            chatType: chatType,
+            replyMode: replyMode,
+            reactionDelegate: reactionDelegate,
+            messageBuilder: nil,
+            inputViewBuilder: nil,
+            messageMenuAction: nil,
+            didUpdateAttachmentStatus: didUpdateAttachmentStatus,
+            didSendMessage: didSendMessage
+        )
     }
 }

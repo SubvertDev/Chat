@@ -163,6 +163,35 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
                 didUpdateAttachmentStatus: ((AttachmentUploadUpdate) -> Void)? = nil,
                 didSendMessage: @escaping (DraftMessage) -> Void
     ) {
+        self.init(
+            initializing: messages,
+            chatType: chatType,
+            replyMode: replyMode,
+            reactionDelegate: reactionDelegate,
+            messageBuilder: messageBuilder,
+            inputViewBuilder: inputViewBuilder,
+            messageMenuAction: messageMenuAction,
+            localization: localization,
+            didUpdateAttachmentStatus: didUpdateAttachmentStatus,
+            didSendMessage: didSendMessage
+        )
+    }
+
+    // Keep stored-property initialization in this file. With Xcode 27, @State is
+    // a macro and its generated initialization expressions do not link correctly
+    // when an initializer in another file initializes ChatView directly.
+    init(
+        initializing messages: [Message],
+        chatType: ChatType,
+        replyMode: ReplyMode,
+        reactionDelegate: ReactionDelegate?,
+        messageBuilder: MessageBuilderClosure?,
+        inputViewBuilder: InputViewBuilderClosure?,
+        messageMenuAction: MessageMenuActionClosure?,
+        localization: ChatLocalization = createLocalization(),
+        didUpdateAttachmentStatus: ((AttachmentUploadUpdate) -> Void)?,
+        didSendMessage: @escaping (DraftMessage) -> Void
+    ) {
         self.type = chatType
         self.reactionDelegate = reactionDelegate
         self.sections = ChatView.mapMessages(messages, chatType: chatType, replyMode: replyMode)
