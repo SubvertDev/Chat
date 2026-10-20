@@ -19,6 +19,7 @@ struct MessageView: View {
     let chatType: ChatType
     let avatarSize: CGFloat
     let tapAvatarClosure: ChatView.TapAvatarClosure?
+    let messageContentBuilder: MessageContentBuilderClosure?
     let messageStyler: (String) -> AttributedString
     let shouldShowLinkPreview: (URL) -> Bool
     let isDisplayingMessageMenu: Bool
@@ -52,6 +53,17 @@ struct MessageView: View {
 
     var additionalMediaInset: CGFloat {
         message.attachments.count > 1 ? MessageView.attachmentPadding * 2 : 0
+    }
+
+    var availableMessageContentWidth: CGFloat {
+        let horizontalPaddings = MessageView.horizontalTextPadding * 2
+        let width = UIScreen.main.bounds.width
+            - (message.user.isCurrentUser
+                ? MessageView.horizontalNoAvatarPadding : avatarViewSize.width)
+            - statusSize.width
+            - MessageView.horizontalBubblePadding
+            - horizontalPaddings
+        return max(0, width)
     }
 
     var dateArrangement: DateArrangement {
@@ -165,7 +177,10 @@ struct MessageView: View {
                     attachmentsView(message)
                 }
 
-                if !message.text.isEmpty {
+                if let messageContentBuilder {
+                    customContentWithTimeView(message, builder: messageContentBuilder)
+                        .font(Font(font))
+                } else if !message.text.isEmpty {
                     textWithTimeView(message)
                         .font(Font(font))
                 }
@@ -179,7 +194,11 @@ struct MessageView: View {
                     }
                 }
             }
-            .bubbleBackground(message, theme: theme)
+            .bubbleBackground(
+                message,
+                theme: theme,
+                hasCustomContent: messageContentBuilder != nil
+            )
             .zIndex(0)
         }
         .applyIf(isDisplayingMessageMenu) {
@@ -325,6 +344,23 @@ struct MessageView: View {
     }
 
     @ViewBuilder
+    func customContentWithTimeView(
+        _ message: Message,
+        builder: MessageContentBuilderClosure
+    ) -> some View {
+        VStack(alignment: .trailing, spacing: 4) {
+            builder(message, availableMessageContentWidth)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: availableMessageContentWidth, alignment: .leading)
+                .padding(.horizontal, MessageView.horizontalTextPadding)
+
+            messageTimeView()
+                .padding(.horizontal, MessageView.horizontalTextPadding)
+        }
+        .padding(.vertical, 8)
+    }
+
+    @ViewBuilder
     func recordingView(_ recording: Recording) -> some View {
         RecordWaveformWithButtons(
             recording: recording,
@@ -358,7 +394,12 @@ struct MessageView: View {
 extension View {
 
     @ViewBuilder
-    func bubbleBackground(_ message: Message, theme: ChatTheme, isReply: Bool = false) -> some View
+    func bubbleBackground(
+        _ message: Message,
+        theme: ChatTheme,
+        isReply: Bool = false,
+        hasCustomContent: Bool = false
+    ) -> some View
     {
         let radius: CGFloat = !message.attachments.isEmpty ? 12 : 20
         let additionalMediaInset: CGFloat = message.attachments.count > 1 ? 2 : 0
@@ -369,7 +410,7 @@ extension View {
             )
             .foregroundColor(theme.colors.messageText(message.user.type))
             .background {
-                if isReply || !message.text.isEmpty || message.recording != nil {
+                if isReply || hasCustomContent || !message.text.isEmpty || message.recording != nil {
                     RoundedRectangle(cornerRadius: radius)
                         .foregroundColor(theme.colors.messageBG(message.user.type))
                         .opacity(isReply ? theme.style.replyOpacity : 1)
@@ -462,6 +503,7 @@ extension View {
                         chatType: .conversation,
                         avatarSize: 32,
                         tapAvatarClosure: nil,
+                        messageContentBuilder: nil,
                         messageStyler: AttributedString.init,
                         shouldShowLinkPreview: { _ in true },
                         isDisplayingMessageMenu: false,
@@ -478,6 +520,7 @@ extension View {
                         chatType: .conversation,
                         avatarSize: 32,
                         tapAvatarClosure: nil,
+                        messageContentBuilder: nil,
                         messageStyler: AttributedString.init,
                         shouldShowLinkPreview: { _ in true },
                         isDisplayingMessageMenu: false,

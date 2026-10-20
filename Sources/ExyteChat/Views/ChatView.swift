@@ -23,6 +23,11 @@ public enum ReplyMode: CaseIterable, Sendable {
     case answer // when replying to message A, new message with appear direclty below message A as a separate cell without duplicating message A in its body
 }
 
+public typealias MessageContentBuilderClosure = (
+    _ message: Message,
+    _ availableWidth: CGFloat
+) -> AnyView
+
 public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction: MessageMenuAction>: View {
     
     /// To build a custom message view use the following parameters passed by this closure:
@@ -89,6 +94,9 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
     
     /// provide custom message view builder
     var messageBuilder: MessageBuilderClosure? = nil
+
+    /// provide custom content inside the default message bubble
+    var messageContentBuilder: MessageContentBuilderClosure? = nil
     
     /// provide custom input view builder
     var inputViewBuilder: InputViewBuilderClosure? = nil
@@ -363,6 +371,7 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
             shouldScrollToTop: $shouldScrollToTop,
             tableContentHeight: $tableContentHeight,
             messageBuilder: messageBuilder,
+            messageContentBuilder: messageContentBuilder,
             mainHeaderBuilder: mainHeaderBuilder,
             headerBuilder: headerBuilder,
             inputView: inputView,
@@ -472,7 +481,8 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
             )
         ) {
             ChatMessageView(
-                viewModel: viewModel, messageBuilder: messageBuilder, row: row, chatType: type,
+                viewModel: viewModel, messageBuilder: messageBuilder,
+                messageContentBuilder: messageContentBuilder, row: row, chatType: type,
                 avatarSize: avatarSize, tapAvatarClosure: nil, messageStyler: messageStyler,
                 shouldShowLinkPreview: shouldShowLinkPreview,
                 isDisplayingMessageMenu: true, showMessageTimeView: showMessageTimeView,
@@ -712,6 +722,16 @@ public extension ChatView {
     func messageUseStyler(_ styler: @escaping (String) -> AttributedString) -> ChatView {
         var view = self
         view.messageStyler = styler
+        return view
+    }
+
+    func messageContentBuilder<Content: View>(
+        @ViewBuilder _ builder: @escaping (Message, CGFloat) -> Content
+    ) -> ChatView {
+        var view = self
+        view.messageContentBuilder = { message, availableWidth in
+            AnyView(builder(message, availableWidth))
+        }
         return view
     }
     

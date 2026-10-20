@@ -18,4 +18,17 @@ final class ExampleChatTests: XCTestCase {
             XCTAssertEqual(component, expected[index], accuracy: 1 / 256)
         }
     }
+
+    @MainActor
+    func testMessageContentBuilderKeepsDefaultMessageView() {
+        let chat = ChatView(messages: [], didSendMessage: { _ in })
+        XCTAssertNil(chat.messageContentBuilder)
+
+        let configured = chat.messageContentBuilder { message, availableWidth in
+            Text(message.text)
+                .frame(maxWidth: availableWidth)
+        }
+
+        XCTAssertNotNil(configured.messageContentBuilder)
+    }
 }

@@ -14,6 +14,7 @@ struct ChatMessageView<MessageContent: View>: View {
     @ObservedObject var viewModel: ChatViewModel
 
     var messageBuilder: MessageBuilderClosure?
+    var messageContentBuilder: MessageContentBuilderClosure?
 
     let row: MessageRow
     let chatType: ChatType
@@ -47,6 +48,7 @@ struct ChatMessageView<MessageContent: View>: View {
                     chatType: chatType,
                     avatarSize: avatarSize,
                     tapAvatarClosure: tapAvatarClosure,
+                    messageContentBuilder: messageContentBuilder,
                     messageStyler: messageStyler,
                     shouldShowLinkPreview: shouldShowLinkPreview,
                     isDisplayingMessageMenu: isDisplayingMessageMenu,

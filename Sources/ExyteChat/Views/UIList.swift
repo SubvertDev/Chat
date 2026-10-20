@@ -25,6 +25,7 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
     @Binding var tableContentHeight: CGFloat
 
     var messageBuilder: MessageBuilderClosure?
+    var messageContentBuilder: MessageContentBuilderClosure?
     var mainHeaderBuilder: (()->AnyView)?
     var headerBuilder: ((Date)->AnyView)?
     var inputView: InputView
@@ -366,7 +367,8 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
         Coordinator(
             viewModel: viewModel, inputViewModel: inputViewModel,
             isScrolledToBottom: $isScrolledToBottom, isScrolledToTop: $isScrolledToTop,
-            messageBuilder: messageBuilder, mainHeaderBuilder: mainHeaderBuilder,
+            messageBuilder: messageBuilder, messageContentBuilder: messageContentBuilder,
+            mainHeaderBuilder: mainHeaderBuilder,
             headerBuilder: headerBuilder, type: type, showDateHeaders: showDateHeaders,
             avatarSize: avatarSize, showMessageMenuOnLongPress: showMessageMenuOnLongPress,
             tapAvatarClosure: tapAvatarClosure, paginationHandler: paginationHandler,
@@ -387,6 +389,7 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
         @Binding var isScrolledToTop: Bool
 
         let messageBuilder: MessageBuilderClosure?
+        let messageContentBuilder: MessageContentBuilderClosure?
         let mainHeaderBuilder: (()->AnyView)?
         let headerBuilder: ((Date)->AnyView)?
 
@@ -416,7 +419,9 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
         init(
             viewModel: ChatViewModel, inputViewModel: InputViewModel,
             isScrolledToBottom: Binding<Bool>, isScrolledToTop: Binding<Bool>,
-            messageBuilder: MessageBuilderClosure?, mainHeaderBuilder: (() -> AnyView)?,
+            messageBuilder: MessageBuilderClosure?,
+            messageContentBuilder: MessageContentBuilderClosure?,
+            mainHeaderBuilder: (() -> AnyView)?,
             headerBuilder: ((Date) -> AnyView)?, type: ChatType, showDateHeaders: Bool,
             avatarSize: CGFloat, showMessageMenuOnLongPress: Bool,
             tapAvatarClosure: ChatView.TapAvatarClosure?, paginationHandler: PaginationHandler?,
@@ -431,6 +436,7 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
             self._isScrolledToBottom = isScrolledToBottom
             self._isScrolledToTop = isScrolledToTop
             self.messageBuilder = messageBuilder
+            self.messageContentBuilder = messageContentBuilder
             self.mainHeaderBuilder = mainHeaderBuilder
             self.headerBuilder = headerBuilder
             self.type = type
@@ -577,7 +583,8 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
             let row = sections[indexPath.section].rows[indexPath.row]
             tableViewCell.contentConfiguration = UIHostingConfiguration {
                 ChatMessageView(
-                    viewModel: viewModel, messageBuilder: messageBuilder, row: row, chatType: type,
+                    viewModel: viewModel, messageBuilder: messageBuilder,
+                    messageContentBuilder: messageContentBuilder, row: row, chatType: type,
                     avatarSize: avatarSize, tapAvatarClosure: tapAvatarClosure,
                     messageStyler: messageStyler, shouldShowLinkPreview: shouldShowLinkPreview,
                     isDisplayingMessageMenu: false, showMessageTimeView: showMessageTimeView,
